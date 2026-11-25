@@ -6,6 +6,10 @@ const MainBlock = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    const [title, setTitle] = useState("");
+    const [body, setBody] = useState("");
+    const [status, setStatus] = useState(true);
+
     useEffect(() => {
         const getPosts = async () => {
             try {
@@ -34,6 +38,23 @@ const MainBlock = () => {
         setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
     };
 
+    const handleAddPost = (e) => {
+        e.preventDefault();
+        if (!title.trim() || !body.trim()) return;
+
+        const newPost = {
+            id: Date.now(),
+            title: title,
+            body: body,
+            status: status
+        };
+
+        setPosts([newPost, ...posts]);
+        setTitle("");
+        setBody("");
+        setStatus(true);
+    };
+
     if (loading) {
         return <div className="loading">Загрузка...</div>;
     }
@@ -41,6 +62,34 @@ const MainBlock = () => {
     return (
         <div className="main-wrapper">
             <h1 className="main-title">Dummy</h1>
+
+            <form className="add-form" onSubmit={handleAddPost}>
+                <input
+                    type="text"
+                    placeholder="Заголовок поста"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    required
+                />
+                <textarea
+                    placeholder="Текст поста"
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)}
+                    required
+                />
+                <div className="form-controls">
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={status}
+                            onChange={(e) => setStatus(e.target.checked)}
+                        />
+                        Status (True)
+                    </label>
+                    <button type="submit">Добавить пост</button>
+                </div>
+            </form>
+
             <div className="main-block">
                 {posts.map((post) => (
                     <PostDummy
